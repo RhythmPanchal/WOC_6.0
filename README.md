@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# WOC 6.0: IRCTC Clone
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> A train-ticket search and booking app modelled on IRCTC, built with React, Express and MongoDB for the WOC 2024 programme run by MSTC, DA-IICT.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)
+![Material UI](https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white)
 
-In the project directory, you can run:
+## What it does
 
-### `npm start`
+Users sign up, log in, enter a *from* station, a *to* station, a journey date and a class, and get a list of trains between those stations with their timings, classes and fares. They can then continue to a booking page and manage their account details.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The train and fare data is modelled on the response format of the [IRCTC RapidAPI](https://rapidapi.com/) (`irctc1.p.rapidapi.com`: `trainBetweenStations` and `getFare`). In the current code the live API calls are commented out and the pages render **bundled sample responses** instead, so search results are static.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+- Sign up and log in (users stored in MongoDB).
+- Protected pages: the `/private/*` routes redirect to login unless an `email` cookie is set.
+- Train search between stations with a station-code picker, date and class filter.
+- Train cards with timings, runs-on days and class types, and a fare lookup that leads to the booking page.
+- Account page to view and update your profile, and log out.
+- Backend `/booking` endpoint that stores a booking and rejects a duplicate for the same user, train and date.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech stack
 
-### `npm run build`
+| Part | Tech |
+| --- | --- |
+| Frontend | React 18 (Create React App), React Router 6, Axios, Material UI, MDB React UI Kit, react-toastify, js-cookie |
+| Backend | Node.js, Express 4, Mongoose 8, cors, dotenv |
+| Database | MongoDB |
+| Fonts | Poppins, Smooch Sans (bundled) |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Project layout
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+backend/
+  index.js          Express server and routes
+  UsersModel.js     Mongoose user schema
+  BookingModel.js   Mongoose booking schema
+frontend/
+  src/
+    App.js          routes
+    config.js       backend base URL
+    pages/          Login, Signup, Home (search), Card, Booking, Account, Navbar, Footer, ...
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## API (backend)
 
-### `npm run eject`
+| Method | Route | Purpose |
+| --- | --- | --- |
+| GET | `/` | Health check |
+| POST | `/login` | Check email and password |
+| POST | `/Signup` | Register a user |
+| POST | `/booking` | Store a booking |
+| GET | `/user/:email` | Fetch a user's profile |
+| POST | `/update_profile` | Update profile details |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Getting started
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Requirements: Node.js and a MongoDB database (local or hosted).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+**Backend**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+cd backend
+npm install
+```
 
-## Learn More
+Create `backend/.env` with your own values:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+PORT=3001
+MONGO_URL=<your MongoDB connection string>
+FRONTEND_URL=http://localhost:3000
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Then start it with `node index.js` (there is no `start` script).
 
-### Code Splitting
+**Frontend**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`frontend/src/config.js` points `BACKEND_API` at a hosted backend. To use your local server, set it to `null` (the pages then fall back to `http://localhost:3001`), then:
 
-### Analyzing the Bundle Size
+```bash
+cd frontend
+npm install
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The app opens at http://localhost:3000.
 
-### Making a Progressive Web App
+## Status
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+A learning project from a college programme, not a production system. Known limitations: passwords are stored and compared in plain text, login state is a plain `email` cookie, and the train search uses sample data as described above. A real deployment would need hashed passwords, proper sessions or tokens, and rotated credentials.
